@@ -2,14 +2,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    application: appname
   name: appname-service
 spec:
   type: NodePort
   ports:
     - port: 80
-      nodePort: 30002
+      nodePort: 30000
   selector:
     application: appname
 ---
@@ -17,8 +15,6 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    application: appname
   name: appname-deployment
 spec:
   replicas: 1
