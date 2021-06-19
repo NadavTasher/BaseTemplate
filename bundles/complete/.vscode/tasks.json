@@ -3,6 +3,42 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Apply configuration",
+            "type": "shell",
+            "command": "kubectl apply -f deployment.yaml"
+        },
+        {
+            "label": "Restart rollout",
+            "type": "shell",
+            "command": "kubectl rollout restart deployment/appname"
+        },
+        {
+            "label": "Build image",
+            "type": "shell",
+            "command": "docker build application -t registry:32000/appname:latest"
+        },
+        {
+            "label": "Push image",
+            "type": "shell",
+            "command": "docker push registry:32000/appname:latest"
+        },
+        {
+            "label": "Kubernetes deploy",
+            "group": "build",
+            "problemMatcher": [],
+            "presentation": {
+                "panel": "shared",
+                "clear": true,
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Build image",
+                "Push image",
+                "Apply configuration",
+                "Restart rollout"
+            ]
+        },
+        {
             "label": "Stop services",
             "type": "shell",
             "command": "docker-compose down --timeout 1"
@@ -13,7 +49,7 @@
             "command": "docker-compose up --build"
         },
         {
-            "label": "Restart services",
+            "label": "Compose deploy",
             "group": "build",
             "problemMatcher": [],
             "presentation": {
