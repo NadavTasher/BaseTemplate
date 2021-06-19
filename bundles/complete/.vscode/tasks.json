@@ -10,17 +10,17 @@
         {
             "label": "Restart rollout",
             "type": "shell",
-            "command": "kubectl rollout restart deployment/appname"
+            "command": "kubectl rollout restart deployment/appname-deployment"
         },
         {
             "label": "Build image",
             "type": "shell",
-            "command": "docker build application -t registry:32000/appname:latest"
+            "command": "docker build application -t registry:32000/appname-image:latest"
         },
         {
             "label": "Push image",
             "type": "shell",
-            "command": "docker push registry:32000/appname:latest"
+            "command": "docker push registry:32000/appname-image:latest"
         },
         {
             "label": "Kubernetes deploy",

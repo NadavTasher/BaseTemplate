@@ -1,68 +1,57 @@
+# Service configuration to configure port forwarding
 apiVersion: v1
-items:
-  - apiVersion: v1
-    kind: Service
+kind: Service
+metadata:
+  labels:
+    application: appname
+  name: appname-service
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      nodePort: 30002
+  selector:
+    application: appname
+---
+# Deployment configuration to configure the container
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    application: appname
+  name: appname-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      application: appname
+  strategy:
+    type: Recreate
+  template:
     metadata:
       labels:
-        app: appname
-      name: appname
+        application: appname
     spec:
-      type: NodePort
-      ports:
-        - name: http
-          port: 80
-          nodePort: 30000
-      selector:
-        app: appname
-    status:
-      loadBalancer: {}
-  - apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      labels:
-        app: appname
-      name: appname
-    spec:
-      replicas: 1
-      selector:
-        matchLabels:
-          app: appname
-      strategy:
-        type: Recreate
-        rollingUpdate: null
-      template:
-        metadata:
-          labels:
-            app: appname
-        spec:
-          containers:
-            - image: localhost:32000/appname:latest
-              name: appname
-              ports:
-                - containerPort: 80
-              resources: {}
-              volumeMounts:
-                - mountPath: /opt
-                  name: appname-data
-          restartPolicy: Always
-          volumes:
-            - name: appname-data
-              persistentVolumeClaim:
-                claimName: appname-data
-    status: {}
-  - apiVersion: v1
-    kind: PersistentVolumeClaim
-    metadata:
-      creationTimestamp: null
-      labels:
-        app: appname-data
-      name: appname-data
-    spec:
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 100Mi
-    status: {}
-kind: List
-metadata: {}
+      containers:
+        - image: localhost:32000/myapp-image:latest
+          name: appname-container
+          volumeMounts:
+            - mountPath: /opt
+              name: appname-volume
+      restartPolicy: Always
+      volumes:
+        - name: appname-volume
+          persistentVolumeClaim:
+            claimName: appname-volume
+---
+# Volume configuration to configure persistant data storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: appname-volume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
